@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 
 class Tag(models.Model):
     """
-    **Модель тегов для категории змей.**
+    **Модель тегов для категории и змей.**
     
     Используется для отображения дополнительных меток:
         - Хит продаж
@@ -99,6 +99,7 @@ class Snake(models.Model):
         - `temp_min_c`: Минимальная температура содержания змеи в градусах Цельсия.
         - `temp_max_c`: Максимальная температура содержания змеи в градусах Цельсия.
         - `difficulty_level_id`: Внешний ключ на модель Difficulty_Level (может быть null).
+        - `tag_id`: Внешний ключ на модель Tag (может быть null).
         - `is_active`: Флаг отображения змеи (по умолчанию True).
         - `views_count`: Количество просмотров страницы змеи (по умолчанию 0).
         - `sku`: Уникальный артикул змеи (макс. 50 символов).
@@ -121,6 +122,9 @@ class Snake(models.Model):
     temp_max_c = models.SmallIntegerField()
     difficulty_level_id = models.ForeignKey(
         DifficultyLevel, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    tag_id = models.ForeignKey(
+        Tag, on_delete=models.SET_NULL, null=True, blank=True
     )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

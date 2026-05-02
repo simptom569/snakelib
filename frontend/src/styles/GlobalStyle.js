@@ -11,7 +11,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Nunito', sans-serif;
     font-size: 16px;
     color: #1a1a1a;
-    background: #fff;
+    background: #F9FCFA;
     -webkit-font-smoothing: antialiased;
   }
 `;

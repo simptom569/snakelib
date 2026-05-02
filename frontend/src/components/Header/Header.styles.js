@@ -236,6 +236,12 @@ export const LoginButton = styled.button`
   }
 `;
 
+export const HeaderLoginWrap = styled.div`
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    display: none;
+  }
+`;
+
 export const BurgerButton = styled.button`
   display: none;
   flex-direction: column;

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const BREAKPOINTS = {
-  mobile: '480px',
-  tablet: '900px',
-  laptop: '1024px',
+  mobile: '560px',
+  tablet: '1200px',
+  laptop: '1200px',
 };
 
 export const Section = styled.section`
@@ -119,9 +119,15 @@ export const Card = styled.article`
 export const CardImage = styled.div`
   width: 100%;
   flex: 1;
+  min-height: 153px;
   background-image: url(${({ $src }) => $src});
   background-size: cover;
   background-position: center;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    flex: none;
+    height: 200px;
+  }
 `;
 
 export const CardBody = styled.div`
@@ -138,6 +144,10 @@ export const CardName = styled.h3`
   line-height: 100%;
   color: #0d1910;
   margin: 0;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    font-size: 24px;
+  }
 `;
 
 export const CardDesc = styled.p`
@@ -146,6 +156,10 @@ export const CardDesc = styled.p`
   line-height: 150%;
   color: #0d1910;
   margin: 0;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    font-size: 12px;
+  }
 `;
 
 export const CardFooter = styled.div`
@@ -165,6 +179,10 @@ export const Price = styled.span`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    font-size: 22px;
+  }
 `;
 
 export const Tag = styled.span`

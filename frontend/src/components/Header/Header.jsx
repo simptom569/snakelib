@@ -12,6 +12,7 @@ import {
   Actions,
   CartButton,
   LoginButton,
+  HeaderLoginWrap,
   BurgerButton,
   MobileMenu,
   MobileNavLink,
@@ -101,7 +102,7 @@ function Header({ cartCount = 0 }) {
 
         <Actions>
           <CartButton>Корзина ({cartCount})</CartButton>
-          <LoginButton>Войти</LoginButton>
+          <HeaderLoginWrap><LoginButton>Войти</LoginButton></HeaderLoginWrap>
           <BurgerButton
             aria-label="Меню"
             aria-expanded={menuOpen}
