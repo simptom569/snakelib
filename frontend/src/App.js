@@ -7,16 +7,28 @@ import Reviews from './components/Reviews/Reviews';
 import Consultation from './components/Consultation/Consultation';
 import Footer from './components/Footer/Footer';
 import CatalogPage from './pages/CatalogPage/CatalogPage';
+import AboutPage from './pages/AboutPage/AboutPage';
+import FaqPage from './pages/FaqPage/FaqPage';
+import DeliveryPage from './pages/DeliveryPage/DeliveryPage';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 
-const isCatalog = window.location.pathname === '/catalog';
+const path = window.location.pathname;
 
 function App() {
   return (
     <>
       <GlobalStyle />
       <Header cartCount={0} />
-      {isCatalog ? (
+      {path === '/catalog' ? (
         <CatalogPage />
+      ) : path === '/about' ? (
+        <AboutPage />
+      ) : path === '/faq' ? (
+        <FaqPage />
+      ) : path === '/delivery' ? (
+        <DeliveryPage />
+      ) : path !== '/' ? (
+        <NotFoundPage />
       ) : (
         <>
           <Hero />

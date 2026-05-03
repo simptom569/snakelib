@@ -11,14 +11,14 @@ const BP = {
 export const Page = styled.div`
   max-width: 1280px;
   margin: 0 auto;
-  padding: 60px 40px 120px;
+  padding: 60px 40px 0;
 
   @media (max-width: ${BP.laptop}) {
-    padding: 40px 20px 80px;
+    padding: 40px 20px 0;
   }
 
   @media (max-width: ${BP.mobile}) {
-    padding: 32px 16px 60px;
+    padding: 32px 16px 0;
   }
 `;
 
