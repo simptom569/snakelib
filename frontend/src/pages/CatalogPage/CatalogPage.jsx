@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from 'react';
-import { SNAKES } from './snakes';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Page, PageHeader, Badge, PageTitle, PageSubtitle,
   Layout, Sidebar, FilterSection, FilterTitle, ChipGroup, Chip,
@@ -13,10 +12,6 @@ import {
   Stats, StatPill, SkillRow, Stars, SkillLabel, ColorRow,
   Desc, CardFooter, PriceBlock, PriceLabel, Price, BuyButton, StatusTag,
 } from './CatalogPage.styles';
-
-/* ─── constants ──────────────────────────────────────────── */
-
-const CATEGORIES = ['Все', 'Ужовые', 'Питоны', 'Удавы'];
 const SKILLS = [
   { key: 0, label: 'Любой' },
   { key: 1, label: '★ Начинающий' },
@@ -30,29 +25,36 @@ const SORT_OPTIONS = [
   { value: 'name_asc',   label: 'Название: А → Я' },
   { value: 'name_desc',  label: 'Название: Я → А' },
 ];
-
 const PRICE_MIN = 0;
-const PRICE_MAX = 150000;
+const PRICE_MAX = 700000;
 const SIZE_MIN = 0;
 const SIZE_MAX = 700;
 const TEMP_MIN = 18;
 const TEMP_MAX = 40;
-
 const SKILL_STARS = { 1: '★☆☆', 2: '★★☆', 3: '★★★' };
-
 function toPct(val, absMin, absMax) {
   return Math.round(((val - absMin) / (absMax - absMin)) * 100);
 }
-
 function formatPrice(n) {
   return n.toLocaleString('ru-RU') + ' ₸';
 }
-
-/* ─── SnakeCard ──────────────────────────────────────────── */
-
+function pluralSnakes(n) {
+  if (n === 1) return 'змея';
+  if (n >= 2 && n <= 4) return 'змеи';
+  return 'змей';
+}
+function pluralColors(n) {
+  if (n === 1) return 'цвет';
+  if (n >= 2 && n <= 4) return 'цвета';
+  return 'цветов';
+}
 function SnakeCard({ snake }) {
-  const { image, available, name, lengthMin, lengthMax, tempMin, tempMax,
-          colors, skill, skillLabel, description, price, badge } = snake;
+  const available = snake.quantity > 0;
+  const skill = snake.difficulty?.stars ?? null;
+  const skillLabel = snake.difficulty?.name ?? '';
+  const image = snake.images?.[0]?.image_url ?? null;
+  const morphsCount = snake.morphs_count > 0 ? snake.morphs_count : 1;
+  const badge = snake.tag ? { label: snake.tag.name, color: snake.tag.color } : null;
   return (
     <Card>
       <ImageWrap $src={image}>
@@ -61,25 +63,27 @@ function SnakeCard({ snake }) {
         </AvailBadge>
       </ImageWrap>
       <Body>
-        <Name>{name}</Name>
+        <Name>{snake.name}</Name>
         <Stats>
-          <StatPill>📏 {lengthMin}–{lengthMax} см</StatPill>
-          <StatPill>🌡 {tempMin}–{tempMax}°C</StatPill>
+          <StatPill>📏 {snake.size_min_cm}–{snake.size_max_cm} см</StatPill>
+          <StatPill>🌡 {snake.temp_min_c}–{snake.temp_max_c}°C</StatPill>
         </Stats>
-        <SkillRow>
-          <Stars>{SKILL_STARS[skill]}</Stars>
-          <SkillLabel $level={skill}>{skillLabel}</SkillLabel>
-        </SkillRow>
-        <ColorRow>🎨 {colors} {colors === 1 ? 'цвет' : colors < 5 ? 'цвета' : 'цветов'}</ColorRow>
-        <Desc>{description}</Desc>
+        {skill && (
+          <SkillRow>
+            <Stars>{SKILL_STARS[skill]}</Stars>
+            <SkillLabel $level={skill}>{skillLabel}</SkillLabel>
+          </SkillRow>
+        )}
+        <ColorRow>🎨 {morphsCount} {pluralColors(morphsCount)}</ColorRow>
+        <Desc>{snake.description}</Desc>
         <CardFooter>
           <PriceBlock>
             <PriceLabel>Цена</PriceLabel>
-            <Price>{formatPrice(price)}</Price>
+            <Price>{formatPrice(snake.price)}</Price>
           </PriceBlock>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5 }}>
             {badge && (
-              <StatusTag $bg={badge.bg} $border={badge.border} $color={badge.color}>
+              <StatusTag $bg={badge.color + '33'} $border={badge.color} $color={badge.color}>
                 {badge.label}
               </StatusTag>
             )}
@@ -92,13 +96,9 @@ function SnakeCard({ snake }) {
     </Card>
   );
 }
-
-/* ─── RangeFilter ────────────────────────────────────────── */
-
 function RangeFilter({ min, max, absMin, absMax, unit, onChange }) {
   const leftPct  = toPct(min, absMin, absMax);
   const rightPct = 100 - toPct(max, absMin, absMax);
-
   function handleMinSlider(e) {
     const v = Number(e.target.value);
     onChange([Math.min(v, max - 1), max]);
@@ -117,7 +117,6 @@ function RangeFilter({ min, max, absMin, absMax, unit, onChange }) {
     if (isNaN(v)) return;
     onChange([min, Math.min(absMax, Math.max(v, min + 1))]);
   }
-
   return (
     <RangeWrap>
       <TrackWrap>
@@ -156,38 +155,44 @@ function RangeFilter({ min, max, absMin, absMax, unit, onChange }) {
     </RangeWrap>
   );
 }
-
-/* ─── CatalogPage ────────────────────────────────────────── */
-
 const DEFAULT_FILTERS = {
   onlyAvailable: false,
-  category: 'Все',
+  category: null,
   skill: 0,
   price: [PRICE_MIN, PRICE_MAX],
   size: [SIZE_MIN, SIZE_MAX],
   temp: [TEMP_MIN, TEMP_MAX],
 };
-
 function CatalogPage() {
+  const [snakes, setSnakes] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sort, setSort] = useState('default');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/v1/snakes/?page_size=100').then(r => r.json()),
+      fetch('/api/v1/categories/').then(r => r.json()),
+    ]).then(([snakesData, catsData]) => {
+      setSnakes(snakesData.results ?? snakesData);
+      setCategories(catsData.results ?? catsData);
+      setLoading(false);
+    });
+  }, []);
   const set = (key, val) => setFilters(f => ({ ...f, [key]: val }));
   const reset = () => setFilters(DEFAULT_FILTERS);
-
   const isModified = JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS);
-
   const result = useMemo(() => {
-    let list = SNAKES.filter(s => {
-      if (filters.onlyAvailable && !s.available) return false;
-      if (filters.skill !== 0 && s.skill !== filters.skill) return false;
+    let list = snakes.filter(s => {
+      if (filters.onlyAvailable && s.quantity <= 0) return false;
+      if (filters.category !== null && s.category?.id !== filters.category) return false;
+      if (filters.skill !== 0 && s.difficulty?.stars !== filters.skill) return false;
       if (s.price < filters.price[0] || s.price > filters.price[1]) return false;
-      if (s.lengthMax < filters.size[0] || s.lengthMin > filters.size[1]) return false;
-      if (s.tempMax < filters.temp[0] || s.tempMin > filters.temp[1]) return false;
+      if (s.size_max_cm < filters.size[0] || s.size_min_cm > filters.size[1]) return false;
+      if (s.temp_max_c < filters.temp[0] || s.temp_min_c > filters.temp[1]) return false;
       return true;
     });
-
     switch (sort) {
       case 'price_asc':  list = [...list].sort((a, b) => a.price - b.price); break;
       case 'price_desc': list = [...list].sort((a, b) => b.price - a.price); break;
@@ -196,8 +201,7 @@ function CatalogPage() {
       default: break;
     }
     return list;
-  }, [filters, sort]);
-
+  }, [snakes, filters, sort]);
   return (
     <Page>
       <PageHeader>
@@ -207,34 +211,31 @@ function CatalogPage() {
           Выберите своего питомца — от спокойных полозов до редких экзотических видов
         </PageSubtitle>
       </PageHeader>
-
       <Layout>
-        {/* ── Sidebar ── */}
         <MobileFilterBtn onClick={() => setSidebarOpen(v => !v)}>
           {sidebarOpen ? '✕ Скрыть фильтры' : '⚙ Фильтры'}
           {isModified && ' •'}
         </MobileFilterBtn>
-
         <Sidebar $open={sidebarOpen}>
-
           <FilterSection>
             <ToggleRow onClick={() => set('onlyAvailable', !filters.onlyAvailable)}>
               <ToggleLabel>Только в наличии</ToggleLabel>
               <ToggleTrack $on={filters.onlyAvailable} />
             </ToggleRow>
           </FilterSection>
-
           <FilterSection>
             <FilterTitle>Категория</FilterTitle>
             <ChipGroup>
-              {CATEGORIES.map(c => (
-                <Chip key={c} $active={filters.category === c} onClick={() => set('category', c)}>
-                  {c}
+              <Chip $active={filters.category === null} onClick={() => set('category', null)}>
+                Все
+              </Chip>
+              {categories.map(c => (
+                <Chip key={c.id} $active={filters.category === c.id} onClick={() => set('category', c.id)}>
+                  {c.name}
                 </Chip>
               ))}
             </ChipGroup>
           </FilterSection>
-
           <FilterSection>
             <FilterTitle>Уровень сложности</FilterTitle>
             <ChipGroup>
@@ -245,7 +246,6 @@ function CatalogPage() {
               ))}
             </ChipGroup>
           </FilterSection>
-
           <FilterSection>
             <FilterTitle>Цена, ₸</FilterTitle>
             <RangeFilter
@@ -255,7 +255,6 @@ function CatalogPage() {
               onChange={v => set('price', v)}
             />
           </FilterSection>
-
           <FilterSection>
             <FilterTitle>Размер, см</FilterTitle>
             <RangeFilter
@@ -265,7 +264,6 @@ function CatalogPage() {
               onChange={v => set('size', v)}
             />
           </FilterSection>
-
           <FilterSection>
             <FilterTitle>Температура, °C</FilterTitle>
             <RangeFilter
@@ -275,18 +273,14 @@ function CatalogPage() {
               onChange={v => set('temp', v)}
             />
           </FilterSection>
-
           {isModified && (
             <ResetBtn onClick={reset}>Сбросить все фильтры</ResetBtn>
           )}
         </Sidebar>
-
-        {/* ── Content ── */}
         <Content>
           <Toolbar>
             <ResultCount>
-              Найдено: <strong>{result.length}</strong>{' '}
-              {result.length === 1 ? 'змея' : result.length < 5 ? 'змеи' : 'змей'}
+              {loading ? 'Загрузка...' : <>Найдено: <strong>{result.length}</strong> {pluralSnakes(result.length)}</>}
             </ResultCount>
             <SortWrap>
               <SortSelect value={sort} onChange={e => setSort(e.target.value)}>
@@ -297,9 +291,10 @@ function CatalogPage() {
               <SortIcon>▼</SortIcon>
             </SortWrap>
           </Toolbar>
-
           <Grid>
-            {result.length > 0 ? (
+            {loading ? (
+              <Empty><span style={{ fontSize: 40 }}>⏳</span>Загружаем каталог...</Empty>
+            ) : result.length > 0 ? (
               result.map(snake => <SnakeCard key={snake.id} snake={snake} />)
             ) : (
               <Empty>
@@ -313,5 +308,4 @@ function CatalogPage() {
     </Page>
   );
 }
-
 export default CatalogPage;

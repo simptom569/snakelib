@@ -112,7 +112,7 @@ const team = [
   {
     emoji: '👨‍🔬',
     bg: 'rgba(6,141,39,0.15)',
-    name: 'Артём Лесников',
+    name: 'Руслан Бухлов',
     role: 'Основатель',
     desc: 'Герпетолог с 12-летним стажем. Влюблён в королевских питонов.',
   },
@@ -158,7 +158,7 @@ function AboutPage() {
           <SectionLabel>Наша миссия</SectionLabel>
           <SectionTitle>Экзотика без рисков и тайн</SectionTitle>
           <SectionDesc>
-            Мы основали SnakeLab в 2019 году, потому что устали видеть, как люди покупают больных животных у непроверенных продавцов. Наша цель — стать стандартом честного и ответственного рынка экзотических рептилий в России.
+            Мы основали SnakeLab в 2019 году, потому что устали видеть, как люди покупают больных животных у непроверенных продавцов. Наша цель — стать стандартом честного и ответственного рынка экзотических рептилий в Казахстане.
           </SectionDesc>
           <SectionDesc>
             Каждая змея в нашем каталоге выращена в правильных условиях, осмотрена ветеринаром и готова к переезду к любящему хозяину. Мы не просто продаём — мы сопровождаем на каждом этапе.
@@ -169,7 +169,7 @@ function AboutPage() {
             <MissionCardEmoji>🐍</MissionCardEmoji>
             <MissionCardText>
               <MissionCardTitle $dark>2019</MissionCardTitle>
-              <MissionCardLabel $dark>Год основания в Москве</MissionCardLabel>
+              <MissionCardLabel $dark>Год основания в Алматы</MissionCardLabel>
             </MissionCardText>
           </MissionCard>
           <MissionCard>

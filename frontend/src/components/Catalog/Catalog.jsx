@@ -21,7 +21,6 @@ import {
   Price,
   Tag,
 } from './Catalog.styles';
-
 function Catalog() {
   return (
     <Section>
@@ -32,9 +31,7 @@ function Catalog() {
           От спокойных маисовых полозов до редких экзотических видов — у нас вы найдёте змею, которая подойдёт именно вам
         </Subtitle>
       </Header>
-
       <Grid>
-        {/* Левая колонка — одна большая карточка на всю высоту */}
         <Column>
           <Card>
             <CardImage $src={img1} />
@@ -52,8 +49,6 @@ function Catalog() {
             </CardBody>
           </Card>
         </Column>
-
-        {/* Правая колонка — два маленьких сверху + одна широкая снизу */}
         <Column>
           <Row>
             <Card>
@@ -77,7 +72,6 @@ function Catalog() {
                 </CardFooter>
               </CardBody>
             </Card>
-
             <Card>
               <CardImage $src={img3} />
               <CardBody $gap="12px" $paddingTop="10px">
@@ -91,7 +85,6 @@ function Catalog() {
               </CardBody>
             </Card>
           </Row>
-
           <Card>
             <CardImage $src={img4} />
             <CardBody $gap="12px" $paddingTop="10px">
@@ -116,5 +109,4 @@ function Catalog() {
     </Section>
   );
 }
-
 export default Catalog;

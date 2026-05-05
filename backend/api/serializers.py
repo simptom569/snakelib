@@ -37,7 +37,7 @@ class DifficultyLevelSerializer(serializers.ModelSerializer):
 
 
 class SnakeCategorySerializer(serializers.ModelSerializer):
-    tag = TagSerializer(source='tag_id', read_only=True)
+    tag = TagSerializer(read_only=True)
 
     class Meta:
         model = SnakeCategory
@@ -53,7 +53,7 @@ class MorphSerializer(serializers.ModelSerializer):
 class SnakeImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SnakeImage
-        fields = ['id', 'morph_id', 'image_url']
+        fields = ['id', 'morph', 'image_url']
 
 
 class SnakeCharacteristicSerializer(serializers.ModelSerializer):
@@ -63,17 +63,19 @@ class SnakeCharacteristicSerializer(serializers.ModelSerializer):
 
 
 class SnakeListSerializer(serializers.ModelSerializer):
-    category = SnakeCategorySerializer(source='category_id', read_only=True)
-    difficulty = DifficultyLevelSerializer(source='difficulty_level_id', read_only=True)
+    category = SnakeCategorySerializer(read_only=True)
+    difficulty = DifficultyLevelSerializer(read_only=True)
+    tag = TagSerializer(read_only=True)
     images = SnakeImageSerializer(many=True, source='snakeimage_set', read_only=True)
+    morphs_count = serializers.IntegerField(source='morph_set.count', read_only=True)
 
     class Meta:
         model = Snake
         fields = [
-            'id', 'name', 'slug', 'category', 'difficulty',
+            'id', 'name', 'slug', 'description', 'category', 'difficulty', 'tag',
             'price', 'quantity', 'size_min_cm', 'size_max_cm',
             'temp_min_c', 'temp_max_c', 'is_active', 'views_count', 'sku',
-            'images',
+            'images', 'morphs_count',
         ]
 
 
@@ -126,8 +128,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 # ------------------------------------------------------------------
 
 class CartItemSerializer(serializers.ModelSerializer):
-    snake = SnakeListSerializer(source='snake_id', read_only=True)
-    morph = MorphSerializer(source='morph_id', read_only=True)
+    snake = SnakeListSerializer(read_only=True)
+    morph = MorphSerializer(read_only=True)
 
     class Meta:
         model = CartItem

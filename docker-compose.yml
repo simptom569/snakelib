@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: snakelab
+      POSTGRES_USER: snakelab
+      POSTGRES_PASSWORD: snakelab
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U snakelab"]
+      interval: 5s
+      retries: 5
+    networks:
+      - snakelab-network
+
+  backend:
+    build: ./backend
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgres://snakelab:snakelab@db:5432/snakelab
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - snakelab-network
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    networks:
+      - snakelab-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - snakelab-network
+
+networks:
+  snakelab-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.81.0.0/24
+          gateway: 172.81.0.1
+
+volumes:
+  postgres_data:

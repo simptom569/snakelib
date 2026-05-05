@@ -68,7 +68,7 @@ class DifficultyLevelViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SnakeCategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SnakeCategory.objects.select_related('tag_id').all()
+    queryset = SnakeCategory.objects.select_related('tag').all()
     serializer_class = SnakeCategorySerializer
     permission_classes = [AllowAny]
     filter_backends = [SearchFilter]
@@ -78,13 +78,13 @@ class SnakeCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class SnakeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         Snake.objects
-        .select_related('category_id', 'difficulty_level_id')
+        .select_related('category', 'difficulty_level', 'tag')
         .prefetch_related('snakeimage_set', 'morph_set', 'snakecharacteristic')
         .filter(is_active=True)
     )
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['category_id', 'difficulty_level_id']
+    filterset_fields = ['category', 'difficulty_level']
     search_fields = ['name', 'slug', 'sku']
     ordering_fields = ['price', 'created_at', 'views_count']
     ordering = ['-created_at']
@@ -116,10 +116,10 @@ class UserAddressViewSet(
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
-        return UserAdress.objects.filter(user_id=self.request.user)
+        return UserAdress.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user)
+        serializer.save(user=self.request.user)
 
 
 # ------------------------------------------------------------------
@@ -131,7 +131,7 @@ class CartView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        cart, _ = UserCart.objects.get_or_create(user_id=self.request.user)
+        cart, _ = UserCart.objects.get_or_create(user=self.request.user)
         return cart
 
 
@@ -145,9 +145,9 @@ class CartItemViewSet(
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        cart, _ = UserCart.objects.get_or_create(user_id=self.request.user)
-        return CartItem.objects.filter(cart_id=cart)
+        cart, _ = UserCart.objects.get_or_create(user=self.request.user)
+        return CartItem.objects.filter(cart=cart)
 
     def perform_create(self, serializer):
-        cart, _ = UserCart.objects.get_or_create(user_id=self.request.user)
-        serializer.save(cart_id=cart)
+        cart, _ = UserCart.objects.get_or_create(user=self.request.user)
+        serializer.save(cart=cart)

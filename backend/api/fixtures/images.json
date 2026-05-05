@@ -1,0 +1,13 @@
+[
+  {"model": "api.snakeimage", "pk": 1, "fields": {"snake": 1, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Ball_python_lucy.JPG/800px-Ball_python_lucy.JPG"}},
+  {"model": "api.snakeimage", "pk": 2, "fields": {"snake": 2, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/White-lipped_Python.jpg/800px-White-lipped_Python.jpg"}},
+  {"model": "api.snakeimage", "pk": 3, "fields": {"snake": 3, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Elaphe_obsoleta_lindheimeri.jpg/800px-Elaphe_obsoleta_lindheimeri.jpg"}},
+  {"model": "api.snakeimage", "pk": 4, "fields": {"snake": 4, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Trimeresurus_insularis_2.jpg/800px-Trimeresurus_insularis_2.jpg"}},
+  {"model": "api.snakeimage", "pk": 5, "fields": {"snake": 5, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Epicrates_cenchria_cenchria.jpg/800px-Epicrates_cenchria_cenchria.jpg"}},
+  {"model": "api.snakeimage", "pk": 6, "fields": {"snake": 6, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Boa_constrictor_imperator_Parque_Nacional_Cahuita.jpg/800px-Boa_constrictor_imperator_Parque_Nacional_Cahuita.jpg"}},
+  {"model": "api.snakeimage", "pk": 7, "fields": {"snake": 7, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Heterodon_nasicus2.jpg/800px-Heterodon_nasicus2.jpg"}},
+  {"model": "api.snakeimage", "pk": 8, "fields": {"snake": 8, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Lampropeltis_getula_californiae.jpg/800px-Lampropeltis_getula_californiae.jpg"}},
+  {"model": "api.snakeimage", "pk": 9, "fields": {"snake": 9, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Morelia_viridis_coiled.jpg/800px-Morelia_viridis_coiled.jpg"}},
+  {"model": "api.snakeimage", "pk": 10, "fields": {"snake": 10, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Lampropeltis_triangulum_campbelli.jpg/800px-Lampropeltis_triangulum_campbelli.jpg"}},
+  {"model": "api.snakeimage", "pk": 11, "fields": {"snake": 11, "morph": null, "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Epicrates_cenchria_cenchria.jpg/800px-Epicrates_cenchria_cenchria.jpg"}}
+]

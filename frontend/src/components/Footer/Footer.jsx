@@ -96,15 +96,15 @@ function Footer() {
             <ColTitle>Контакты</ColTitle>
             <ContactItem>
               <ContactLabel>Телефон</ContactLabel>
-              <ContactValue href="tel:+79991234567">+7 (999) 123-45-67</ContactValue>
+              <ContactValue href="tel:+77012345678">+7 (701) 234-56-78</ContactValue>
             </ContactItem>
             <ContactItem>
               <ContactLabel>Email</ContactLabel>
-              <ContactValue href="mailto:info@snakelab.ru">info@snakelab.ru</ContactValue>
+              <ContactValue href="mailto:Nyaha@gmail.com">Nyaha@gmail.com</ContactValue>
             </ContactItem>
             <ContactItem>
               <ContactLabel>Адрес</ContactLabel>
-              <ContactValue as="span">Москва, ул. Серпентарная, 1</ContactValue>
+              <ContactValue as="span">Алматы, ул. Абая, 1</ContactValue>
             </ContactItem>
           </ContactCol>
         </LinksGrid>

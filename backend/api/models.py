@@ -55,7 +55,7 @@ class SnakeCategory(models.Model):
     name = models.CharField(max_length=250)
     slug = models.CharField(max_length=50)
     description = models.TextField()
-    tag_id = models.ForeignKey(
+    tag = models.ForeignKey(
         Tag, on_delete=models.SET_NULL, null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -110,7 +110,7 @@ class Snake(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
     slug = models.CharField(max_length=50)
-    category_id = models.ForeignKey(
+    category = models.ForeignKey(
         SnakeCategory, on_delete=models.SET_NULL, null=True, blank=True
     )
     description = models.TextField()
@@ -120,10 +120,10 @@ class Snake(models.Model):
     size_max_cm = models.SmallIntegerField()
     temp_min_c = models.SmallIntegerField()
     temp_max_c = models.SmallIntegerField()
-    difficulty_level_id = models.ForeignKey(
+    difficulty_level = models.ForeignKey(
         DifficultyLevel, on_delete=models.SET_NULL, null=True, blank=True
     )
-    tag_id = models.ForeignKey(
+    tag = models.ForeignKey(
         Tag, on_delete=models.SET_NULL, null=True, blank=True
     )
     is_active = models.BooleanField(default=True)
@@ -148,7 +148,7 @@ class SnakeCharacteristic(models.Model):
     """
     
     id = models.AutoField(primary_key=True)
-    snake_id = models.OneToOneField(
+    snake = models.OneToOneField(
         Snake, on_delete=models.CASCADE
     )
     lifespan_years = models.IntegerField()
@@ -178,14 +178,14 @@ class Morph(models.Model):
     """
     
     id = models.AutoField(primary_key=True)
-    snake_id = models.ForeignKey(
+    snake = models.ForeignKey(
         Snake, on_delete=models.CASCADE
     )
     name = models.CharField(max_length=50)
     description = models.TextField()
     price_modifier = models.IntegerField()
     quantity = models.IntegerField()
-    color = models.CharField(max_length=10)
+    color = models.CharField(max_length=7)
 
 
 class SnakeImage(models.Model):
@@ -200,10 +200,10 @@ class SnakeImage(models.Model):
     """
     
     id = models.AutoField(primary_key=True)
-    snake_id = models.ForeignKey(
+    snake = models.ForeignKey(
         Snake, on_delete=models.CASCADE
     )
-    morph_id = models.ForeignKey(
+    morph = models.ForeignKey(
         Morph, on_delete=models.SET_NULL, null=True, blank=True
     )
     image_url = models.URLField()
@@ -346,7 +346,7 @@ class UserAdress(models.Model):
     """
     
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User, on_delete=models.CASCADE
     )
     country = models.CharField(max_length=50)
@@ -370,7 +370,7 @@ class UserCart(models.Model):
         - `updated_at`: Дата и время последнего обновления записи.
     """
     
-    user_id = models.OneToOneField(
+    user = models.OneToOneField(
         User, on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -390,13 +390,13 @@ class CartItem(models.Model):
         - `updated_at`: Дата и время последнего обновления записи.
     """
     
-    cart_id = models.ForeignKey(
+    cart = models.ForeignKey(
         UserCart, on_delete=models.CASCADE
     )
-    snake_id = models.ForeignKey(
+    snake = models.ForeignKey(
         Snake, on_delete=models.CASCADE
     )
-    morph_id = models.ForeignKey(
+    morph = models.ForeignKey(
         Morph, on_delete=models.SET_NULL, null=True, blank=True
     )
     quantity = models.IntegerField()
