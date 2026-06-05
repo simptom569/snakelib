@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import api from '../../api/client';
 import {
   HeaderWrapper,
   Inner,
@@ -16,39 +17,20 @@ import {
   BurgerButton,
   MobileMenu,
   MobileNavLink,
+  MobileNavDivider,
   MobileActions,
+  UserMenuWrap,
+  UserAvatar,
+  UserDropdown,
+  UserDropdownItem,
+  UserDropdownDivider,
 } from './Header.styles';
 
-const NAV_ITEMS = [
+const BASE_NAV = [
   { label: 'Главная', href: '/' },
-  {
-    label: 'Каталог змей',
-    href: '/catalog',
-    dropdown: [
-      { label: 'Все змеи', href: '/catalog' },
-      { label: 'Королевские питоны', href: '/catalog/royal-python' },
-      { label: 'Кукурузные змеи', href: '/catalog/corn-snake' },
-      { label: 'Молочные змеи', href: '/catalog/milk-snake' },
-    ],
-  },
-  {
-    label: 'Террариумы',
-    href: '/terrariums',
-    dropdown: [
-      { label: 'Все террариумы', href: '/terrariums' },
-      { label: 'Стеклянные', href: '/terrariums/glass' },
-      { label: 'Пластиковые', href: '/terrariums/plastic' },
-    ],
-  },
-  {
-    label: 'Корма',
-    href: '/food',
-    dropdown: [
-      { label: 'Все корма', href: '/food' },
-      { label: 'Замороженные', href: '/food/frozen' },
-      { label: 'Живые', href: '/food/live' },
-    ],
-  },
+  { label: 'Каталог змей', href: '/catalog',    dropdownKey: 'snakes' },
+  { label: 'Террариумы',   href: '/terrariums', dropdownKey: 'terrariums' },
+  { label: 'Корма',        href: '/food',        dropdownKey: 'foods' },
   { label: 'Доставка и оплата', href: '/delivery' },
   { label: 'О нас', href: '/about' },
   { label: 'FAQ', href: '/faq' },
@@ -67,8 +49,106 @@ const SnakeIcon = () => (
   </svg>
 );
 
-function Header({ cartCount = 0 }) {
+function getInitials(user) {
+  if (!user) return '?';
+  const first = (user.first_name || '').trim()[0] || '';
+  const last = (user.last_name || '').trim()[0] || '';
+  return (first + last).toUpperCase() || (user.email || '?')[0].toUpperCase();
+}
+
+function UserMenu({ user, onLogout }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  async function handleLogout() {
+    try { await api.logout(); } catch {}
+    onLogout();
+    window.location.href = '/';
+  }
+
+  return (
+    <UserMenuWrap ref={ref}>
+      <UserAvatar onClick={() => setOpen(v => !v)} $open={open} title={user.email}>
+        {getInitials(user)}
+      </UserAvatar>
+      <UserDropdown $open={open}>
+        <div style={{ padding: '12px 16px 8px' }}>
+          <div style={{ fontWeight: 800, fontSize: 14, color: '#0d1910' }}>
+            {user.first_name} {user.last_name}
+          </div>
+          <div style={{ fontSize: 12, color: '#6b7c6e', marginTop: 2 }}>{user.email}</div>
+        </div>
+        <UserDropdownDivider />
+        <UserDropdownItem href="/profile">Мой профиль</UserDropdownItem>
+        <UserDropdownItem href="/orders">Мои заказы</UserDropdownItem>
+        {user.role === 'admin' && (
+          <>
+            <UserDropdownDivider />
+            <UserDropdownItem href="/admin-panel" $admin target="_blank" rel="noreferrer">Админ-панель ↗</UserDropdownItem>
+          </>
+        )}
+        <UserDropdownDivider />
+        <UserDropdownItem as="button" onClick={handleLogout} $danger>
+          Выйти
+        </UserDropdownItem>
+      </UserDropdown>
+    </UserMenuWrap>
+  );
+}
+
+function Header({ cartCount = 0, user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [snakeCategories, setSnakeCategories] = useState([]);
+  const [terrariumCategories, setTerrariumCategories] = useState([]);
+  const [foodCategories, setFoodCategories] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/v1/categories/?page_size=50').then(r => r.json())
+      .then(d => setSnakeCategories(d.results ?? d)).catch(() => {});
+    fetch('/api/v1/terrarium-categories/?page_size=50').then(r => r.json())
+      .then(d => setTerrariumCategories(d.results ?? d)).catch(() => {});
+    fetch('/api/v1/food-categories/?page_size=50').then(r => r.json())
+      .then(d => setFoodCategories(d.results ?? d)).catch(() => {});
+  }, []);
+
+  const navItems = BASE_NAV.map(item => {
+    if (item.dropdownKey === 'snakes') {
+      return {
+        ...item,
+        dropdown: [
+          { label: 'Все змеи', href: '/catalog' },
+          ...snakeCategories.map(c => ({ label: c.name, href: `/catalog/category/${c.slug}` })),
+        ],
+      };
+    }
+    if (item.dropdownKey === 'terrariums') {
+      return {
+        ...item,
+        dropdown: [
+          { label: 'Все террариумы', href: '/terrariums' },
+          ...terrariumCategories.map(c => ({ label: c.name, href: `/terrariums/category/${c.slug}` })),
+        ],
+      };
+    }
+    if (item.dropdownKey === 'foods') {
+      return {
+        ...item,
+        dropdown: [
+          { label: 'Все корма', href: '/food' },
+          ...foodCategories.map(c => ({ label: c.name, href: `/food/category/${c.slug}` })),
+        ],
+      };
+    }
+    return item;
+  });
 
   return (
     <HeaderWrapper>
@@ -79,7 +159,7 @@ function Header({ cartCount = 0 }) {
         </Logo>
 
         <Nav>
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavItem key={item.href}>
               <NavLink href={item.href}>
                 {item.label}
@@ -101,8 +181,14 @@ function Header({ cartCount = 0 }) {
         </Nav>
 
         <Actions>
-          <CartButton>Корзина ({cartCount})</CartButton>
-          <HeaderLoginWrap><LoginButton>Войти</LoginButton></HeaderLoginWrap>
+          <CartButton as="a" href="/cart">Корзина ({cartCount})</CartButton>
+          {user ? (
+            <UserMenu user={user} onLogout={onLogout} />
+          ) : (
+            <HeaderLoginWrap>
+              <LoginButton href="/login">Войти</LoginButton>
+            </HeaderLoginWrap>
+          )}
           <BurgerButton
             aria-label="Меню"
             aria-expanded={menuOpen}
@@ -116,18 +202,42 @@ function Header({ cartCount = 0 }) {
       </Inner>
 
       <MobileMenu $open={menuOpen}>
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <MobileNavLink key={item.href} href={item.href}>
             {item.label}
           </MobileNavLink>
         ))}
+
+        {user && (
+          <>
+            <MobileNavDivider />
+            <MobileNavLink href="/profile">Мой профиль</MobileNavLink>
+            <MobileNavLink href="/orders">Мои заказы</MobileNavLink>
+            {user.role === 'admin' && (
+              <MobileNavLink href="/admin-panel" target="_blank" rel="noreferrer" $admin>
+                Админ-панель ↗
+              </MobileNavLink>
+            )}
+            <MobileNavDivider />
+            <MobileNavLink as="button" onClick={async () => { try { await api.logout(); } catch {} onLogout(); window.location.href = '/'; }} $danger>
+              Выйти
+            </MobileNavLink>
+          </>
+        )}
+
         <MobileActions>
-          <CartButton style={{ flex: 1, justifyContent: 'center' }}>
+          <CartButton as="a" href="/cart" style={{ flex: 1, justifyContent: 'center' }}>
             Корзина ({cartCount})
           </CartButton>
-          <LoginButton style={{ flex: 1, justifyContent: 'center' }}>
-            Войти
-          </LoginButton>
+          {user ? (
+            <LoginButton href="/profile" style={{ flex: 1, justifyContent: 'center' }}>
+              {getInitials(user)} Профиль
+            </LoginButton>
+          ) : (
+            <LoginButton href="/login" style={{ flex: 1, justifyContent: 'center' }}>
+              Войти
+            </LoginButton>
+          )}
         </MobileActions>
       </MobileMenu>
     </HeaderWrapper>

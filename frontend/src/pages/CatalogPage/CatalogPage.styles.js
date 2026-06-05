@@ -441,6 +441,8 @@ export const Stars = styled.span`
   display: inline-flex;
   gap: 1px;
   font-size: 13px;
+  color: ${({ $level }) =>
+    $level === 1 ? '#068d27' : $level === 2 ? '#c56300' : '#9b30c5'};
 `;
 export const SkillLabel = styled.span`
   font-size: 12px;

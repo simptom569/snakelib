@@ -191,14 +191,14 @@ class Morph(models.Model):
 class SnakeImage(models.Model):
     """
     **Модель для изображений змей.**
-    
+
     **Параметры:**
         - `id`: Автоматическое поле, первичный ключ.
         - `snake_id`: Внешний ключ на модель Snake (обязательное поле).
         - `morph_id`: Внешний ключ на модель Morph (может быть null, если изображение относится ко всем морфам).
         - `image_url`: URL изображения змеи.
     """
-    
+
     id = models.AutoField(primary_key=True)
     snake = models.ForeignKey(
         Snake, on_delete=models.CASCADE
@@ -208,6 +208,210 @@ class SnakeImage(models.Model):
     )
     image_url = models.URLField()
 
+
+# ==========================================================
+#                    TERRARIUM DATABASES
+# ==========================================================
+
+class TerrariumCategory(models.Model):
+    """
+    **Модель для категорий террариумов.**
+
+    Например:
+        - Тропический
+        - Пустынный
+        - Полуводный
+        - и т.д.
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `name`: Название категории (макс. 250 символов).
+        - `slug`: Уникальный идентификатор для URL (макс. 50 символов).
+        - `description`: Описание категории.
+        - `tag_id`: Внешний ключ на модель Tag (может быть null).
+        - `created_at`: Дата и время создания записи.
+        - `updated_at`: Дата и время последнего обновления записи.
+    """
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=250)
+    slug = models.CharField(max_length=50)
+    description = models.TextField()
+    tag = models.ForeignKey(
+        Tag, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Terrarium(models.Model):
+    """
+    **Модель для террариумов.**
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `name`: Название террариума (макс. 250 символов).
+        - `slug`: Уникальный идентификатор для URL (макс. 50 символов).
+        - `category_id`: Внешний ключ на модель TerrariumCategory (может быть null).
+        - `description`: Описание террариума.
+        - `price`: Цена террариума (целое число).
+        - `quantity`: Количество в наличии.
+        - `length_cm`: Длина террариума в сантиметрах.
+        - `width_cm`: Ширина террариума в сантиметрах.
+        - `height_cm`: Высота террариума в сантиметрах.
+        - `material`: Материал изготовления (макс. 100 символов).
+        - `tag_id`: Внешний ключ на модель Tag (может быть null).
+        - `is_active`: Флаг отображения террариума (по умолчанию True).
+        - `views_count`: Количество просмотров страницы (по умолчанию 0).
+        - `sku`: Уникальный артикул террариума (макс. 50 символов).
+        - `created_at`: Дата и время создания записи.
+        - `updated_at`: Дата и время последнего обновления записи.
+    """
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=250)
+    slug = models.CharField(max_length=50)
+    category = models.ForeignKey(
+        TerrariumCategory, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    description = models.TextField()
+    price = models.IntegerField()
+    quantity = models.IntegerField()
+    length_cm = models.SmallIntegerField()
+    width_cm = models.SmallIntegerField()
+    height_cm = models.SmallIntegerField()
+    material = models.CharField(max_length=100)
+    tag = models.ForeignKey(
+        Tag, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    is_active = models.BooleanField(default=True)
+    views_count = models.IntegerField(default=0)
+    sku = models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class TerrariumImage(models.Model):
+    """
+    **Модель для изображений террариумов.**
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `terrarium_id`: Внешний ключ на модель Terrarium (обязательное поле).
+        - `image_url`: URL изображения террариума.
+    """
+
+    id = models.AutoField(primary_key=True)
+    terrarium = models.ForeignKey(
+        Terrarium, on_delete=models.CASCADE
+    )
+    image_url = models.URLField()
+
+
+# ==========================================================
+#                       FOOD DATABASES
+# ==========================================================
+
+class FoodCategory(models.Model):
+    """
+    **Модель для категорий кормов.**
+
+    Например:
+        - Замороженные грызуны
+        - Живые грызуны
+        - Насекомые
+        - и т.д.
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `name`: Название категории (макс. 250 символов).
+        - `slug`: Уникальный идентификатор для URL (макс. 50 символов).
+        - `description`: Описание категории.
+        - `tag_id`: Внешний ключ на модель Tag (может быть null).
+        - `created_at`: Дата и время создания записи.
+        - `updated_at`: Дата и время последнего обновления записи.
+    """
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=250)
+    slug = models.CharField(max_length=50)
+    description = models.TextField()
+    tag = models.ForeignKey(
+        Tag, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Food(models.Model):
+    """
+    **Модель для кормов.**
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `name`: Название корма (макс. 250 символов).
+        - `slug`: Уникальный идентификатор для URL (макс. 50 символов).
+        - `category_id`: Внешний ключ на модель FoodCategory (может быть null).
+        - `description`: Описание корма.
+        - `price`: Цена за единицу (целое число).
+        - `quantity`: Количество в наличии.
+        - `weight_g`: Вес одной единицы в граммах.
+        - `animal_type`: Тип животного-корма (макс. 100 символов, например «мышь», «крыса», «саранча»).
+        - `size`: Размер корма — XS / S / M / L / XL.
+        - `is_frozen`: Замороженный (True) или живой (False).
+        - `tag_id`: Внешний ключ на модель Tag (может быть null).
+        - `is_active`: Флаг отображения (по умолчанию True).
+        - `views_count`: Количество просмотров (по умолчанию 0).
+        - `sku`: Уникальный артикул (макс. 50 символов).
+        - `created_at`: Дата и время создания записи.
+        - `updated_at`: Дата и время последнего обновления записи.
+    """
+
+    class Size(models.TextChoices):
+        XS = 'XS', 'XS'
+        S  = 'S',  'S'
+        M  = 'M',  'M'
+        L  = 'L',  'L'
+        XL = 'XL', 'XL'
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=250)
+    slug = models.CharField(max_length=50)
+    category = models.ForeignKey(
+        FoodCategory, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    description = models.TextField()
+    price = models.IntegerField()
+    quantity = models.IntegerField()
+    weight_g = models.SmallIntegerField()
+    animal_type = models.CharField(max_length=100)
+    size = models.CharField(max_length=2, choices=Size.choices, default=Size.M)
+    is_frozen = models.BooleanField(default=True)
+    tag = models.ForeignKey(
+        Tag, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    is_active = models.BooleanField(default=True)
+    views_count = models.IntegerField(default=0)
+    sku = models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class FoodImage(models.Model):
+    """
+    **Модель для изображений кормов.**
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `food_id`: Внешний ключ на модель Food (обязательное поле).
+        - `image_url`: URL изображения корма.
+    """
+
+    id = models.AutoField(primary_key=True)
+    food = models.ForeignKey(
+        Food, on_delete=models.CASCADE
+    )
+    image_url = models.URLField()
 
 
 # ==========================================================
@@ -380,25 +584,200 @@ class UserCart(models.Model):
 class CartItem(models.Model):
     """
     **Модель для элементов корзины.**
-    
+
+    Ровно одно из полей snake / terrarium / food должно быть заполнено.
+    Поле morph актуально только при заполненном snake.
+
     **Параметры:**
-        - `cart_id`: Внешний ключ на модель UserCart (обязательное поле).
-        - `snake_id`: Внешний ключ на модель Snake (обязательное поле).
-        - `morph_id`: Внешний ключ на модель Morph (может быть null, если пользователь не выбрал конкретный морф).
-        - `quantity`: Количество змей данного вида в корзине.
+        - `cart_id`: Внешний ключ на модель UserCart.
+        - `snake_id`: Внешний ключ на модель Snake (null если товар другого типа).
+        - `morph_id`: Внешний ключ на модель Morph (null если морф не выбран).
+        - `quantity`: Количество единиц товара в корзине.
         - `added_at`: Дата и время добавления записи.
         - `updated_at`: Дата и время последнего обновления записи.
     """
-    
+
     cart = models.ForeignKey(
         UserCart, on_delete=models.CASCADE
     )
     snake = models.ForeignKey(
-        Snake, on_delete=models.CASCADE
+        Snake, on_delete=models.CASCADE, null=True, blank=True
     )
     morph = models.ForeignKey(
         Morph, on_delete=models.SET_NULL, null=True, blank=True
     )
-    quantity = models.IntegerField()
+    terrarium = models.ForeignKey(
+        Terrarium, on_delete=models.CASCADE, null=True, blank=True
+    )
+    food = models.ForeignKey('Food', on_delete=models.CASCADE, null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        filled = [f for f in [self.snake_id, self.terrarium_id, self.food_id] if f is not None]
+        if len(filled) == 0:
+            raise ValidationError('Необходимо указать товар (snake, terrarium или food).')
+        if len(filled) > 1:
+            raise ValidationError('В одной позиции корзины может быть только один тип товара.')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+
+# ==========================================================
+#                     PROMO CODES
+# ==========================================================
+
+class PromoCode(models.Model):
+    """
+    **Модель промокода.**
+
+    **Параметры:**
+        - `code`: Уникальный код (макс. 50 символов, uppercase).
+        - `discount_type`: Тип скидки — 'percent' или 'fixed'.
+        - `discount_value`: Размер скидки (% или рубли).
+        - `min_order_amount`: Минимальная сумма заказа для применения (0 = без ограничений).
+        - `max_uses`: Максимальное число использований (null = без ограничений).
+        - `used_count`: Счётчик использований.
+        - `is_active`: Флаг активности.
+        - `valid_from`: Дата начала действия.
+        - `valid_until`: Дата окончания действия (null = бессрочно).
+        - `created_at`: Дата создания.
+    """
+
+    class DiscountType(models.TextChoices):
+        PERCENT = 'percent', 'Процент'
+        FIXED = 'fixed', 'Фиксированная сумма'
+
+    code = models.CharField(max_length=50, unique=True)
+    discount_type = models.CharField(
+        max_length=10,
+        choices=DiscountType.choices,
+        default=DiscountType.PERCENT,
+    )
+    discount_value = models.PositiveIntegerField()
+    min_order_amount = models.PositiveIntegerField(default=0)
+    max_uses = models.PositiveIntegerField(null=True, blank=True)
+    used_count = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    valid_from = models.DateTimeField()
+    valid_until = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.code
+
+
+# ==========================================================
+#                       ORDER DATABASES
+# ==========================================================
+
+class Order(models.Model):
+    """
+    **Модель заказа.**
+
+    **Параметры:**
+        - `id`: Автоматическое поле, первичный ключ.
+        - `user_id`: Внешний ключ на модель User.
+        - `status`: Статус заказа.
+        - `payment_method`: Способ оплаты — 'card' или 'cash'.
+        - `promo_code_id`: Внешний ключ на модель PromoCode (может быть null).
+        - `total_price`: Итоговая сумма заказа после скидки (целое число).
+        - `address_id`: Внешний ключ на модель UserAdress (может быть null, если адрес удалён).
+        - `delivery_address_snapshot`: Снимок адреса на момент оформления заказа.
+        - `comment`: Комментарий к заказу (может быть пустым).
+        - `created_at`: Дата и время создания заказа.
+        - `updated_at`: Дата и время последнего обновления заказа.
+    """
+
+    class Status(models.TextChoices):
+        PENDING    = 'pending',    'Ожидает подтверждения'
+        CONFIRMED  = 'confirmed',  'Подтверждён'
+        PAID       = 'paid',       'Оплачен'
+        SHIPPED    = 'shipped',    'Отправлен'
+        DELIVERED  = 'delivered',  'Доставлен'
+        CANCELLED  = 'cancelled',  'Отменён'
+
+    class PaymentMethod(models.TextChoices):
+        CARD = 'card', 'Банковская карта'
+        CASH = 'cash', 'Наличные'
+
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+    payment_method = models.CharField(
+        max_length=10,
+        choices=PaymentMethod.choices,
+        default=PaymentMethod.CARD,
+    )
+    promo_code = models.ForeignKey(
+        PromoCode, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    total_price = models.PositiveIntegerField()
+    address = models.ForeignKey(
+        UserAdress, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    delivery_address_snapshot = models.JSONField(default=dict)
+    comment = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Order #{self.id} — {self.user.email} ({self.status})'
+
+
+class OrderItem(models.Model):
+    """
+    **Модель позиции заказа.**
+
+    Ровно одно из полей snake / terrarium / food должно быть заполнено.
+    Поле morph актуально только при заполненном snake.
+
+    **Параметры:**
+        - `order_id`: Внешний ключ на модель Order.
+        - `snake_id`: Внешний ключ на модель Snake (null если товар другого типа).
+        - `morph_id`: Внешний ключ на модель Morph (null если морф не выбран).
+        - `terrarium_id`: Внешний ключ на модель Terrarium (null если товар другого типа).
+        - `food_id`: Внешний ключ на модель Food (null если товар другого типа).
+        - `quantity`: Количество единиц товара.
+        - `unit_price`: Цена за единицу на момент оформления заказа.
+    """
+
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE
+    )
+    snake = models.ForeignKey(
+        Snake, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    morph = models.ForeignKey(
+        Morph, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    terrarium = models.ForeignKey(
+        Terrarium, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    food = models.ForeignKey(
+        Food, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    unit_price = models.PositiveIntegerField()
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        filled = [f for f in [self.snake_id, self.terrarium_id, self.food_id] if f is not None]
+        if len(filled) == 0:
+            raise ValidationError('Необходимо указать товар (snake, terrarium или food).')
+        if len(filled) > 1:
+            raise ValidationError('В одной позиции заказа может быть только один тип товара.')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

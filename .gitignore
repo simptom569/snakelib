@@ -1,0 +1,24 @@
+# Env files — never commit secrets
+backend/.env
+frontend/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Django
+backend/db.sqlite3
+backend/staticfiles/
+
+# Node
+frontend/node_modules/
+frontend/build/
+
+# Docker
+*.log

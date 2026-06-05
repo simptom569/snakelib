@@ -56,7 +56,7 @@ function SnakeCard({ snake }) {
   const morphsCount = snake.morphs_count > 0 ? snake.morphs_count : 1;
   const badge = snake.tag ? { label: snake.tag.name, color: snake.tag.color } : null;
   return (
-    <Card>
+    <Card as="a" href={`/catalog/${snake.slug}`} style={{ textDecoration: 'none' }}>
       <ImageWrap $src={image}>
         <AvailBadge $avail={available}>
           {available ? 'В наличии' : 'Нет в наличии'}
@@ -70,7 +70,7 @@ function SnakeCard({ snake }) {
         </Stats>
         {skill && (
           <SkillRow>
-            <Stars>{SKILL_STARS[skill]}</Stars>
+            <Stars $level={skill}>{SKILL_STARS[skill]}</Stars>
             <SkillLabel $level={skill}>{skillLabel}</SkillLabel>
           </SkillRow>
         )}
@@ -87,8 +87,8 @@ function SnakeCard({ snake }) {
                 {badge.label}
               </StatusTag>
             )}
-            <BuyButton disabled={!available}>
-              {available ? 'Купить' : 'Сообщить'}
+            <BuyButton as="span" disabled={!available}>
+              {available ? 'Подробнее' : 'Нет в наличии'}
             </BuyButton>
           </div>
         </CardFooter>

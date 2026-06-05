@@ -163,6 +163,7 @@ export const CartButton = styled.button`
   border-radius: 100px;
   cursor: pointer;
   white-space: nowrap;
+  text-decoration: none;
   transition: background 0.15s ease, transform 0.1s ease;
   &:hover {
     background: #333333;
@@ -175,7 +176,8 @@ export const CartButton = styled.button`
     padding: 9px 16px;
   }
 `;
-export const LoginButton = styled.button`
+export const LoginButton = styled.a`
+  text-decoration: none;
   display: flex;
   align-items: center;
   padding: 10px 20px;
@@ -252,16 +254,28 @@ export const MobileMenu = styled.div`
 `;
 export const MobileNavLink = styled.a`
   display: block;
+  width: 100%;
   padding: 11px 12px;
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: ${p => p.$danger ? '#e53e3e' : p.$admin ? '#068D27' : '#1a1a1a'};
   text-decoration: none;
+  background: none;
+  border: none;
   border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Nunito', sans-serif;
   transition: background 0.12s;
   &:hover {
-    background: #f5f5f5;
+    background: ${p => p.$danger ? '#fff5f5' : p.$admin ? '#f0fbf3' : '#f5f5f5'};
   }
+`;
+
+export const MobileNavDivider = styled.div`
+  height: 1px;
+  background: #f0f0f0;
+  margin: 6px 12px;
 `;
 export const MobileActions = styled.div`
   display: flex;
@@ -269,4 +283,79 @@ export const MobileActions = styled.div`
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid #f0f0f0;
+`;
+
+export const UserMenuWrap = styled.div`
+  position: relative;
+`;
+
+export const UserAvatar = styled.button`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: ${p => p.$open ? '#068D27' : '#1a1a1a'};
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #068D27;
+    transform: scale(1.06);
+  }
+
+  @media (max-width: ${BREAKPOINTS.tablet}) {
+    display: none;
+  }
+`;
+
+export const UserDropdown = styled.div`
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 210px;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  opacity: ${p => p.$open ? 1 : 0};
+  pointer-events: ${p => p.$open ? 'all' : 'none'};
+  transform: ${p => p.$open ? 'translateY(0)' : 'translateY(-6px)'};
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 200;
+  overflow: hidden;
+`;
+
+export const UserDropdownItem = styled.a`
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: ${p => p.$danger ? '#e53e3e' : p.$admin ? '#068D27' : '#1a1a1a'};
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+  font-weight: ${p => p.$admin ? 800 : 700};
+
+  &:hover {
+    background: ${p => p.$danger ? '#fff5f5' : p.$admin ? '#f0fbf3' : '#f5f5f5'};
+  }
+`;
+
+export const UserDropdownDivider = styled.div`
+  height: 1px;
+  background: #f0f0f0;
+  margin: 4px 0;
 `;
