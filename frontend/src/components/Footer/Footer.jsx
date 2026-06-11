@@ -67,29 +67,29 @@ function Footer() {
             Работаем с 10:00 до 20:00
           </Badge>
           <SocialRow>
-            <SocialBtn href="#" aria-label="ВКонтакте"><VkIcon /></SocialBtn>
-            <SocialBtn href="#" aria-label="Telegram"><TgIcon /></SocialBtn>
-            <SocialBtn href="#" aria-label="WhatsApp"><WaIcon /></SocialBtn>
+            <SocialBtn href="https://vk.com" aria-label="ВКонтакте" target="_blank" rel="noopener noreferrer"><VkIcon /></SocialBtn>
+            <SocialBtn href="https://t.me" aria-label="Telegram" target="_blank" rel="noopener noreferrer"><TgIcon /></SocialBtn>
+            <SocialBtn href="https://wa.me/77012345678" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><WaIcon /></SocialBtn>
           </SocialRow>
         </Brand>
 
         <LinksGrid>
           <LinkCol>
             <ColTitle>Каталог</ColTitle>
-            <ColLink href="#">Все змеи</ColLink>
-            <ColLink href="#">Королевские питоны</ColLink>
-            <ColLink href="#">Маисовые полозы</ColLink>
-            <ColLink href="#">Молочные змеи</ColLink>
-            <ColLink href="#">Императорские удавы</ColLink>
+            <ColLink href="/catalog">Все змеи</ColLink>
+            <ColLink href="/catalog/category/korolevskiy-piton">Королевский питон</ColLink>
+            <ColLink href="/catalog/category/teksaskiy-poloz">Техасский полоз</ColLink>
+            <ColLink href="/catalog/category/belogubiy-piton">Белогубый питон</ColLink>
+            <ColLink href="/catalog/category/ostrovnaya-kufiya">Островная куфия</ColLink>
           </LinkCol>
 
           <LinkCol>
             <ColTitle>Компания</ColTitle>
-            <ColLink href="#">О нас</ColLink>
-            <ColLink href="#">Доставка и оплата</ColLink>
-            <ColLink href="#">Гарантии</ColLink>
-            <ColLink href="#">FAQ</ColLink>
-            <ColLink href="#">Отзывы</ColLink>
+            <ColLink href="/about">О нас</ColLink>
+            <ColLink href="/delivery">Доставка и оплата</ColLink>
+            <ColLink href="/about#guarantees">Гарантии</ColLink>
+            <ColLink href="/faq">FAQ</ColLink>
+            <ColLink href="/about#reviews">Отзывы</ColLink>
           </LinkCol>
 
           <ContactCol>

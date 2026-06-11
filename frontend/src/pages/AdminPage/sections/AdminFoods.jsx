@@ -24,8 +24,8 @@ function FoodModal({ item, onClose, onSaved }) {
     price: String(item.price), quantity: String(item.quantity),
     weight_g: String(item.weight_g), animal_type: item.animal_type,
     size: item.size, is_frozen: item.is_frozen,
-    category: item.category?.id ?? '',
-    tag: item.tag?.id ?? '',
+    category: (typeof item.category === 'object' ? item.category?.id : item.category) ?? '',
+    tag: (typeof item.tag === 'object' ? item.tag?.id : item.tag) ?? '',
     is_active: item.is_active, sku: item.sku,
   } : { ...emptyForm });
   const [categories, setCategories] = useState([]);

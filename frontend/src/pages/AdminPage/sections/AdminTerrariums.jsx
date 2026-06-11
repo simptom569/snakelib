@@ -22,8 +22,8 @@ function TerrariumModal({ item, onClose, onSaved }) {
     price: String(item.price), quantity: String(item.quantity),
     length_cm: String(item.length_cm), width_cm: String(item.width_cm), height_cm: String(item.height_cm),
     material: item.material,
-    category: item.category?.id ?? '',
-    tag: item.tag?.id ?? '',
+    category: (typeof item.category === 'object' ? item.category?.id : item.category) ?? '',
+    tag: (typeof item.tag === 'object' ? item.tag?.id : item.tag) ?? '',
     is_active: item.is_active, sku: item.sku,
   } : { ...emptyForm });
   const [categories, setCategories] = useState([]);

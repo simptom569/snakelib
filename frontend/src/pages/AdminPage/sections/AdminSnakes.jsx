@@ -22,9 +22,9 @@ function SnakeModal({ snake, onClose, onSaved }) {
     price: String(snake.price), quantity: String(snake.quantity),
     size_min_cm: String(snake.size_min_cm), size_max_cm: String(snake.size_max_cm),
     temp_min_c: String(snake.temp_min_c), temp_max_c: String(snake.temp_max_c),
-    category: snake.category?.id ?? '',
-    difficulty_level: snake.difficulty_level ?? '',
-    tag: snake.tag?.id ?? '',
+    category: (typeof snake.category === 'object' ? snake.category?.id : snake.category) ?? '',
+    difficulty_level: (typeof snake.difficulty_level === 'object' ? snake.difficulty_level?.id : snake.difficulty_level) ?? '',
+    tag: (typeof snake.tag === 'object' ? snake.tag?.id : snake.tag) ?? '',
     is_active: snake.is_active, sku: snake.sku,
   } : { ...emptyForm });
   const [categories, setCategories] = useState([]);
